@@ -13,6 +13,7 @@ M.version = "1.1.0"
 -- - `legal_in_path` is a table of characters that will not be url encoded in path components
 -- - `legal_in_query` is a table of characters that will not be url encoded in query values. Query parameters only support a small set of legal characters (-_.).
 -- - `query_plus_is_space` is true by default, so a plus sign in a query value will be converted to %20 (space), not %2B (plus)
+-- - `preserve_authority_port` is false by default. If true, a port present in the authority will be preserved when building the URL even when it's the default port for the service
 -- @todo Add option to limit the size of the argument table
 -- @todo Add option to limit the depth of the argument table
 -- @todo Add option to process dots in parameter names, ie. `param.filter=1`
@@ -32,7 +33,8 @@ M.options = {
 		["'"] = true, [";"] = true, ["("] = true, [")"] = true,
 		["@"] = true, ["$"] = true,
 	},
-	query_plus_is_space = true
+	query_plus_is_space = true,
+	preserve_authority_port = false,
 }
 
 --- list of known and common scheme ports
@@ -122,7 +124,8 @@ function M:build()
 	end
 	if self.host then
 		local authority = self.host
-		if self.port and self.scheme and M.services[self.scheme] ~= self.port then
+		if self.port and self.scheme and (M.services[self.scheme] ~= self.port
+			or M.options.preserve_authority_port) then
 			authority = authority .. ':' .. self.port
 		end
 		local userinfo

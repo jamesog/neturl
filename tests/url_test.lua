@@ -43,6 +43,11 @@ is("gopher://example.com/", tostring(u), "Test scheme gopher")
 u.fragment = "lua"
 is("gopher://example.com/#lua", tostring(u), "Test fragment")
 
+u = url.parse("http://www.example.com:80")
+u.options.preserve_authority_port = true
+is("http://www.example.com:80", tostring(u), "Test default port preserved")
+u.options.preserve_authority_port = false
+
 -- other url tests can be found here:
 -- https://github.com/php/php-src/blob/5b01c4863fe9e4bc2702b2bbf66d292d23001a18/ext/standard/tests/strings/url_t.phpt
 -- https://github.com/php/php-src/blob/5b01c4863fe9e4bc2702b2bbf66d292d23001a18/ext/standard/tests/url/urls.inc
